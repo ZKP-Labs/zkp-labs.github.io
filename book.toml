@@ -1,0 +1,6 @@
+[book]
+authors = ["ZKP-Labs"]
+language = "en"
+multilingual = false
+src = "src"
+title = "ZKP Labs Blog"
