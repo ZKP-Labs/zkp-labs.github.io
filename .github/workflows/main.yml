@@ -42,4 +42,4 @@ jobs:
           SSH_USER: ${{ secrets.SSH_USER }}
         run: |
           ssh prod "sudo rm -rf $HOME_DIR/book"
-          ssh prod "$HOME_DIR/mdbook build"
+          ssh prod "cd $HOME_DIR && mdbook build"
