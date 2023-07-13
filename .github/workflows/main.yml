@@ -18,6 +18,9 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
+      - name: Install mdbook cli
+        run: cargo install mdbook && cargo install mdbook-bib
+
       - name: Prepare SSH environment
         env:
           SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
@@ -42,4 +45,4 @@ jobs:
           SSH_USER: ${{ secrets.SSH_USER }}
         run: |
           ssh prod "sudo rm -rf $HOME_DIR/book"
-          ssh prod "cd $HOME_DIR && mdbook build"
+          sudo rsync -e ssh ./book $SSH_USER:$SSH_HOST/$HOME_DIR
