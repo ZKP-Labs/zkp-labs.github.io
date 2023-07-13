@@ -42,4 +42,4 @@ jobs:
           SSH_USER: ${{ secrets.SSH_USER }}
         run: |
           ssh prod "cd $HOME_DIR && sudo rm -rf ./book"
-          scp -r ./book $SSH_USER@$SSH_HOST:$HOME_DIR
+          sudo scp -r ./book $SSH_USER@$SSH_HOST:$HOME_DIR
