@@ -25,13 +25,13 @@ jobs:
           SSH_USER: ${{ secrets.SSH_USER }}
         run: |
           mkdir -p ~/.ssh/
-          echo "$SSH_PRIVATE_KEY" > ~/.ssh/private.key
-          sudo chmod 600 ~/.ssh/private.key
+          echo "$SSH_PRIVATE_KEY" > ~/.ssh/id_ed25519
+          sudo chmod 600 ~/.ssh/id_ed25519
           cat >>~/.ssh/config <<END
           Host prod
             HostName $SSH_HOST
             User $SSH_USER
-            IdentityFile ~/.ssh/private.key
+            IdentityFile ~/.ssh/id_ed25519
             StrictHostKeyChecking no
           END
 
