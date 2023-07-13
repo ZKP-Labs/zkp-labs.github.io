@@ -1,4 +1,4 @@
-name: Deploy Cookbook to S3
+name: Deploy ZKP-Labs Blog
 
 on:
   push:
