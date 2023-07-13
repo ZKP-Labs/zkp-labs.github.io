@@ -3,6 +3,9 @@ name: Deploy ZKP-Labs Blog
 on:
   push:
     branches: ['main']
+  pull_request:
+    branches:
+      - main
 
 env:
   HOME_DIR: /home/ubuntu/prod/zkp-blog
@@ -41,5 +44,5 @@ jobs:
           SSH_HOST: ${{ secrets.SSH_HOST }}
           SSH_USER: ${{ secrets.SSH_USER }}
         run: |
-          ssh prod "cd $HOME_DIR && sudo rm -rf ./book"
-          sudo scp -r ./book $SSH_USER@$SSH_HOST:$HOME_DIR
+          ssh prod "sudo rm -rf $HOME_DIR/book"
+          ssh prod "$HOME_DIR/mdbook build"
