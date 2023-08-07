@@ -1,48 +1,32 @@
-name: Deploy ZKP-Labs Blog
-
+name: Deploy
 on:
   push:
-    branches: ['main']
-  pull_request:
     branches:
       - main
 
-env:
-  HOME_DIR: /home/ubuntu/prod/zkp-blog
-
 jobs:
   deploy:
-    name: deploy
     runs-on: ubuntu-latest
-
+    permissions:
+      contents: write # To push a branch
+      pull-requests: write # To create a PR from that branch
     steps:
       - uses: actions/checkout@v3
-
-      - name: Install mdbook cli
+        with:
+          fetch-depth: 0
+      - name: Install latest mdbook
         run: cargo install mdbook && cargo install mdbook-bib
-
-      - name: Prepare SSH environment
-        env:
-          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
-          SSH_HOST: ${{ secrets.SSH_HOST }}
-          SSH_USER: ${{ secrets.SSH_USER }}
+      - name: Deploy GitHub Pages
         run: |
-          mkdir -p ~/.ssh/
-          echo "$SSH_PRIVATE_KEY" > ~/.ssh/id_ed25519
-          sudo chmod 600 ~/.ssh/id_ed25519
-          cat >>~/.ssh/config <<END
-          Host prod
-            HostName $SSH_HOST
-            User $SSH_USER
-            IdentityFile ~/.ssh/id_ed25519
-            StrictHostKeyChecking no
-          END
-
-      - name: Deploy
-        env:
-          HOME_DIR: ${{ env.HOME_DIR }}
-          SSH_HOST: ${{ secrets.SSH_HOST }}
-          SSH_USER: ${{ secrets.SSH_USER }}
-        run: |
-          ssh prod "sudo rm -rf $HOME_DIR/book"
-          sudo rsync -e ssh ./book $SSH_USER:$SSH_HOST/$HOME_DIR
+          mdbook build
+          git worktree add gh-pages
+          git config user.name "Deploy from CI"
+          git config user.email ""
+          cd gh-pages
+          # Delete the ref to avoid keeping history.
+          git update-ref -d refs/heads/gh-pages
+          rm -rf *
+          mv ../book/* .
+          git add .
+          git commit -m "Deploy $GITHUB_SHA to gh-pages"
+          git push --force --set-upstream origin gh-pages
